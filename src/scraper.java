@@ -13,7 +13,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 // stop.db Database Structure
-// Agency Name | Agency Tag | Route Name | Route Tag | Stop Name | Stop ID
+// _id | Agency Name | Agency Tag | Route Name | Route Tag | Direction Name | Direction Tag | Stop Name | Stop ID
 
 
 //Get the Transit Agency Information
@@ -27,13 +27,14 @@ public class scraper {
 	static String route = new String();
 	static String direction = new String();
 	static String stop = new String();
+	static int id = 0;
 	
 	public static void main(String[] args) throws Exception {
 		Class.forName("org.sqlite.JDBC");
 		Connection connection = DriverManager.getConnection("jdbc:sqlite:stops.db");
 		Statement statement = connection.createStatement();
 		statement.executeUpdate("drop table if exists stop;");
-		statement.executeUpdate("create table stop (agency_name string, agency_tag string, route_name string, route_tag string, stop_name string, stop_id string);");
+		statement.executeUpdate("create table stop (_id int, agency_name TEXT, agency_tag TEXT, route_name TEXT, route_tag TEXT, direction_name TEXT, direction_tag TEXT, stop_name TEXT, stop_id TEXT);");
 		
 		printAgencies();
 		for (String individualAgency : agencyList.keySet()) {
@@ -43,14 +44,16 @@ public class scraper {
 				for (String individualDirection : directionList.keySet()) {
 					printStops(individualAgency,individualRoute,individualDirection);
 					for (String individualStop : stopList.keySet()) {
-						System.out.println(agencyList.get(individualAgency)+" | "+individualAgency+" | "+routeList.get(individualRoute)+" | "+individualRoute+" | "+stopList.get(individualStop)+" | "+individualStop);
-						statement.executeUpdate("insert into stop values('"+agencyList.get(individualAgency)+"', '"+individualAgency+"', '"+routeList.get(individualRoute)+"', '"+individualRoute+"', '"+stopList.get(individualStop).replace("'", "")+"', '"+individualStop+"');");
+						System.out.println(id+" | "+agencyList.get(individualAgency)+" | "+individualAgency+" | "+routeList.get(individualRoute)+" | "+individualRoute+" | "+directionList.get(individualDirection)+" | "+individualDirection+" | "+stopList.get(individualStop)+" | "+individualStop);
+						statement.executeUpdate("insert into stop values('"+id+"', '"+agencyList.get(individualAgency)+"', '"+individualAgency+"', '"+routeList.get(individualRoute).replace("'", "")+"', '"+individualRoute+"', '"+directionList.get(individualDirection).replace("'", "")+"', '"+individualDirection+"', '"+stopList.get(individualStop).replace("'", "")+"', '"+individualStop+"');");
+						id ++;
 					}
 					stopList.clear();
 				}
 				directionList.clear();
 			}
 			routeList.clear();
+			Thread.sleep(1000);
 		}
 		connection.close();
 	}
