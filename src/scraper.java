@@ -34,7 +34,6 @@ public class scraper {
 		Statement statement = connection.createStatement();
 		statement.executeUpdate("drop table if exists stop;");
 		statement.executeUpdate("create table stop (agency_name string, agency_tag string, route_name string, route_tag string, stop_name string, stop_id string);");
-		//PreparedStatement prep = conn.prepareStatement("insert into stops values (?,?,?,?,?,?);");
 		
 		printAgencies();
 		for (String individualAgency : agencyList.keySet()) {
@@ -53,7 +52,6 @@ public class scraper {
 			}
 			routeList.clear();
 		}
-		
 		connection.close();
 	}
 	
